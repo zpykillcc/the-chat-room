@@ -16,7 +16,7 @@ TERMINATE = False
 
 
 class Video_Server(threading.Thread):
-    def __init__(self, port, version) :
+    def __init__(self, port, version):
         global TERMINATE
         TERMINATE = False
         threading.Thread.__init__(self)
@@ -44,7 +44,7 @@ class Video_Server(threading.Thread):
         print("remote VEDIO client success connected...")
         data = "".encode("utf-8")
         payload_size = struct.calcsize("L")
-        cv2.namedWindow('Remote', cv2.WINDOW_AUTOSIZE)
+        cv2.namedWindow('远端', cv2.WINDOW_AUTOSIZE)
         while True:
             while len(data) < payload_size:
                 data += conn.recv(81920)
@@ -57,7 +57,7 @@ class Video_Server(threading.Thread):
             data = data[msg_size:]
             frame_data = zlib.decompress(zframe_data)
             frame = pickle.loads(frame_data)
-            cv2.imshow('Remote', frame)
+            cv2.imshow('远端', frame)
             if cv2.waitKey(1) & 0xFF == 27:
                 break
 
@@ -82,7 +82,7 @@ class Video_Client(threading.Thread):
         self.cap = cv2.VideoCapture(0)
         print("VEDIO client starts...")
 
-    def __del__(self) :
+    def __del__(self):
         self.sock.close()
         self.cap.release()
         if self.showme:
@@ -100,15 +100,15 @@ class Video_Client(threading.Thread):
                 time.sleep(3)
                 continue
         if self.showme:
-            cv2.namedWindow('You', cv2.WINDOW_NORMAL)
+            cv2.namedWindow('自己', cv2.WINDOW_NORMAL)
         print("VEDIO client connected...")
         while self.cap.isOpened():
             ret, frame = self.cap.read()
             if self.showme:
-                cv2.imshow('You', frame)
+                cv2.imshow('自己', frame)
                 if cv2.waitKey(1) & 0xFF == 27:
                     self.showme = False
-                    cv2.destroyWindow('You')
+                    cv2.destroyWindow('自己')
             sframe = cv2.resize(frame, (0, 0), fx=self.fx, fy=self.fx)
             data = pickle.dumps(sframe)
             zdata = zlib.compress(data, zlib.Z_BEST_COMPRESSION)
@@ -121,14 +121,14 @@ class Video_Client(threading.Thread):
 
 
 class Audio_Server(threading.Thread):
-    def __init__(self, port, version) :
+    def __init__(self, port, version):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.ADDR = ('', port)
         if version == 4:
-            self.sock = socket(AF_INET ,SOCK_STREAM)
+            self.sock = socket(AF_INET, SOCK_STREAM)
         else:
-            self.sock = socket(AF_INET6 ,SOCK_STREAM)
+            self.sock = socket(AF_INET6, SOCK_STREAM)
         self.p = pyaudio.PyAudio()
         self.stream = None
 
@@ -201,10 +201,10 @@ class Audio_Client(threading.Thread):
                 continue
         print("AUDIO client connected...")
         self.stream = self.p.open(format=FORMAT,
-                             channels=CHANNELS,
-                             rate=RATE,
-                             input=True,
-                             frames_per_buffer=CHUNK)
+                                  channels=CHANNELS,
+                                  rate=RATE,
+                                  input=True,
+                                  frames_per_buffer=CHUNK)
         while self.stream.is_active():
             frames = []
             for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):

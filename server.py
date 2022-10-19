@@ -8,7 +8,6 @@ import os.path
 import requests
 import sys
 
-# IP = socket.gethostbyname(socket.getfqdn(socket.gethostname()))
 IP = ''
 PORT = 50007
 apikey = 'ee19328107fa41e987a42a064a68d0da'
@@ -51,8 +50,6 @@ def call_robot(url, apikey, msg):
     r = requests.post(url, headers=headers, data=json.dumps(data))
     return r.json()
 
-#####################################################################################
-
 
 # 将在线用户存入online列表并返回
 def onlines():
@@ -90,7 +87,8 @@ class ChatServer(threading.Thread):
             user = addr[0] + ':' + str(addr[1])
         users.append((conn, user, addr))
         print(' New connection:', addr, ':', user, end='')         # 打印用户名
-        d = onlines()                                                   # 有新连接则刷新客户端的在线用户显示
+        # 有新连接则刷新客户端的在线用户显示
+        d = onlines()
         self.recv(d, addr)
         try:
             while True:
@@ -100,7 +98,8 @@ class ChatServer(threading.Thread):
             conn.close()
         except:
             print(user + ' Connection lose')
-            self.delUsers(conn, addr)                             # 将断开用户移出users
+            # 将断开用户移出users
+            self.delUsers(conn, addr)
             conn.close()
 
     # 判断断开用户在users中是第几位并移出列表, 刷新客户端的在线用户显示
@@ -109,7 +108,8 @@ class ChatServer(threading.Thread):
         for i in users:
             if i[0] == conn:
                 users.pop(a)
-                print(' Remaining online users: ', end='')         # 打印剩余在线用户(conn)
+                print(' Remaining online users: ',
+                      end='')         # 打印剩余在线用户(conn)
                 d = onlines()
                 self.recv(d, addr)
                 print(d)
@@ -136,9 +136,10 @@ class ChatServer(threading.Thread):
                         # user[i][1]是用户名, users[i][2]是addr, 将message[0]改为用户名
                         for j in range(len(users)):
                             if message[0] == users[j][2]:
-                                print(' this: message is from user[{}]'.format(j))
+                                print(
+                                    ' this: message is from user[{}]'.format(j))
                                 if '@Robot' in message[1] and reply_text == '':
-                                    
+
                                     msg = message[1].split(':;')[0]
                                     reply = call_robot(url, apikey, msg)
                                     reply_text = reply['results'][0]['values']['text']
@@ -150,11 +151,11 @@ class ChatServer(threading.Thread):
                                            users[j][1] + ',' + reply_text
                                 else:
                                     data = ' ' + users[j][1] + '：' + message[1]
-                                    break      
+                                    break
                         users[i][0].send(data.encode())
                 # data = data.split(':;')[0]
                 if isinstance(message[1], list):  # 同上
-                    # 如果是list则打包后直接发送  
+                    # 如果是list则打包后直接发送
                     data = json.dumps(message[1])
                     for i in range(len(users)):
                         try:
@@ -175,8 +176,6 @@ class ChatServer(threading.Thread):
             t.start()
         self.s.close()
 
-################################################################
-
 
 class FileServer(threading.Thread):
     def __init__(self, port):
@@ -186,12 +185,13 @@ class FileServer(threading.Thread):
         # self.PORT = port
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.first = r'.\resources'
-        os.chdir(self.first)                                     # 把first设为当前工作路径
+        # 把first设为当前工作路径
+        os.chdir(self.first)
         # self.conn = None
 
     def tcp_connect(self, conn, addr):
         print(' Connected by: ', addr)
-        
+
         while True:
             data = conn.recv(1024)
             data = data.decode()
@@ -200,7 +200,7 @@ class FileServer(threading.Thread):
                 break
             order = data.split(' ')[0]                             # 获取动作
             self.recv_func(order, data, conn)
-                
+
         conn.close()
 
     # 传输当前目录列表
@@ -213,7 +213,7 @@ class FileServer(threading.Thread):
     def sendFile(self, message, conn):
         name = message.split()[1]                               # 获取第二个参数(文件名)
         fileName = r'./' + name
-        with open(fileName, 'rb') as f:    
+        with open(fileName, 'rb') as f:
             while True:
                 a = f.read(1024)
                 if not a:
@@ -277,8 +277,6 @@ class FileServer(threading.Thread):
             t.start()
         self.s.close()
 
-#############################################################################
-
 
 class PictureServer(threading.Thread):
 
@@ -302,7 +300,6 @@ class PictureServer(threading.Thread):
             order = data.split()[0]  # 获取动作
             self.recv_func(order, data, conn)
         conn.close()
-        print('---')
 
     # 发送文件函数
     def sendFile(self, message, conn):
@@ -350,8 +347,6 @@ class PictureServer(threading.Thread):
             t = threading.Thread(target=self.tcp_connect, args=(conn, addr))
             t.start()
         self.s.close()
-
-####################################################################################
 
 
 if __name__ == '__main__':
