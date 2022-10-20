@@ -103,28 +103,49 @@ b1 = ''
 b2 = ''
 b3 = ''
 b4 = ''
+b5 = ''
+b6 = ''
+b7 = ''
+b8 = ''
+b9 = ''
+b10 = ''
+
 # 将图片打开存入变量中
-p1 = tkinter.PhotoImage(file='./emoji/facepalm.png')
-p2 = tkinter.PhotoImage(file='./emoji/smirk.png')
-p3 = tkinter.PhotoImage(file='./emoji/concerned.png')
-p4 = tkinter.PhotoImage(file='./emoji/smart.png')
+p1 = tkinter.PhotoImage(file='./emoji/1.png')
+p2 = tkinter.PhotoImage(file='./emoji/2.png')
+p3 = tkinter.PhotoImage(file='./emoji/3.png')
+p4 = tkinter.PhotoImage(file='./emoji/4.png')
+p5 = tkinter.PhotoImage(file='./emoji/5.png')
+p6 = tkinter.PhotoImage(file='./emoji/6.png')
+p7 = tkinter.PhotoImage(file='./emoji/7.png')
+p8 = tkinter.PhotoImage(file='./emoji/8.png')
+p9 = tkinter.PhotoImage(file='./emoji/9.png')
+p10 = tkinter.PhotoImage(file='./emoji/10.png')
+
 # 用字典将标记与表情图片一一对应, 用于后面接收标记判断表情贴图
-dic = {'aa**': p1, 'bb**': p2, 'cc**': p3, 'dd**': p4}
-ee = 0  # 判断表情面板开关的标志
+dic = {'aa**': p1, 'bb**': p2, 'cc**': p3, 'dd**': p4,
+       'ee**': p5, 'ff**': p6, 'gg**': p7, 'hh**': p8, 'ii**': p9,'jj**': p10}
+zz = 0  # 判断表情面板开关的标志
 
 
 # 发送表情图标记的函数, 在按钮点击事件中调用
 
 
 def mark(exp):  # 参数是发的表情图标记, 发送后将按钮销毁
-    global ee
+    global zz
     mes = exp + ':;' + user + ':;' + chat
     s.send(mes.encode())
     b1.destroy()
     b2.destroy()
     b3.destroy()
     b4.destroy()
-    ee = 0
+    b5.destroy()
+    b6.destroy()
+    b7.destroy()
+    b8.destroy()
+    b9.destroy()
+    b10.destroy()
+    zz = 0
 
 
 # 四个对应的函数
@@ -144,29 +165,78 @@ def bb4():
     mark('dd**')
 
 
+def bb5():
+    mark('ee**')
+
+
+def bb6():
+    mark('ff**')
+
+
+def bb7():
+    mark('gg**')
+
+
+def bb8():
+    mark('hh**')
+
+
+def bb9():
+    mark('ii**')
+
+
+def bb10():
+    mark('jj**')
+
+
+
 def express():
-    global b1, b2, b3, b4, ee
-    if ee == 0:
-        ee = 1
+    global b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, zz
+    if zz == 0:
+        zz = 1
         b1 = tkinter.Button(root, command=bb1, image=p1,
-                            relief=tkinter.FLAT, bd=0)
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
         b2 = tkinter.Button(root, command=bb2, image=p2,
-                            relief=tkinter.FLAT, bd=0)
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
         b3 = tkinter.Button(root, command=bb3, image=p3,
-                            relief=tkinter.FLAT, bd=0)
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
         b4 = tkinter.Button(root, command=bb4, image=p4,
-                            relief=tkinter.FLAT, bd=0)
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
+        b5 = tkinter.Button(root, command=bb5, image=p5,
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
+        b6 = tkinter.Button(root, command=bb6, image=p6,
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
+        b7 = tkinter.Button(root, command=bb7, image=p7,
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
+        b8 = tkinter.Button(root, command=bb8, image=p8,
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
+        b9 = tkinter.Button(root, command=bb9, image=p9,
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
+        b10 = tkinter.Button(root, command=bb10, image=p10,
+                            relief=tkinter.FLAT, bd=0, width=70, height=70)
 
         b1.place(x=5, y=248)
         b2.place(x=75, y=248)
         b3.place(x=145, y=248)
         b4.place(x=215, y=248)
+        b5.place(x=5, y=178)
+        b6.place(x=75, y=178)
+        b7.place(x=145, y=178)
+        b8.place(x=215, y=178)
+        b9.place(x=5, y=108)
+        b10.place(x=75, y=108)
     else:
-        ee = 0
+        zz = 0
         b1.destroy()
         b2.destroy()
         b3.destroy()
         b4.destroy()
+        b5.destroy()
+        b6.destroy()
+        b7.destroy()
+        b8.destroy()
+        b9.destroy()
+        b10.destroy()
 
 
 # 创建表情按钮
