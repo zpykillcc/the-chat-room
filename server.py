@@ -288,7 +288,7 @@ class PictureServer(threading.Thread):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # self.conn = None
         os.chdir(sys.path[0])
-        self.folder = '.\\Server_image_cache\\'  # 图片的保存文件夹
+        self.folder = './Server_image_cache/'  # 图片的保存文件夹
 
     def tcp_connect(self, conn, addr):
         while True:
@@ -305,14 +305,14 @@ class PictureServer(threading.Thread):
     def sendFile(self, message, conn):
         print(message)
         name = message.split()[1]                   # 获取第二个参数(文件名)
-        fileName = self.folder + name               # 将文件夹和图片名连接起来
+        fileName = os.path.join(self.folder,name)               # 将文件夹和图片名连接起来
         f = open(fileName, 'rb')
         while True:
             a = f.read(1024)
             if not a:
                 break
             conn.send(a)
-        time.sleep(0.1)                             # 延时确保文件发送完整
+        time.sleep(0.5)                             # 延时确保文件发送完整
         conn.send('EOF'.encode())
         print('Image sent!')
 
@@ -320,16 +320,18 @@ class PictureServer(threading.Thread):
     def recvFile(self, message, conn):
         print(message)
         name = message.split(' ')[1]                   # 获取文件名
-        fileName = self.folder + name                  # 将文件夹和图片名连接起来
+        fileName = os.path.join(self.folder,name)                  # 将文件夹和图片名连接起来
         print(fileName)
         print('Start saving!')
-        f = open(fileName, 'wb+')
-        while True:
-            data = conn.recv(1024)
-            if data == 'EOF'.encode():
-                print('Saving completed!')
-                break
-            f.write(data)
+        with open(fileName, 'wb+') as f:
+            while True:
+                data = conn.recv(1024)
+                print(data)
+                if data == ('EOF'.encode()):
+                    print('Saving completed!')
+                    break
+                f.write(data)
+        conn.send('Completed'.encode())
 
     # 判断输入的命令并执行对应的函数
     def recv_func(self, order, message, conn):

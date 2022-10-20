@@ -10,7 +10,7 @@ from tkinter import filedialog
 import vachat
 import os
 from time import sleep
-from PIL import ImageGrab
+from PIL import ImageGrab,ImageTk,Image
 from netifaces import interfaces, ifaddresses, AF_INET6
 
 IP = ''
@@ -182,7 +182,7 @@ def fileGet(name):
     ss2.connect((IP, PORT3))
     message = 'get ' + name
     ss2.send(message.encode())
-    fileName = '.\\Client_image_cache\\' + name
+    fileName = os.path.join('./Client_image_cache/',name)
     print('Start downloading image!')
     print('Waiting.......')
     with open(fileName, 'wb') as f:
@@ -194,6 +194,7 @@ def fileGet(name):
             f.write(data)
     time.sleep(0.1)
     ss2.send('quit'.encode())
+    return fileName
 
 
 # 将图片上传到图片服务端的缓存文件夹中
@@ -213,16 +214,22 @@ def filePut(fileName):
     with open(fileName, 'rb') as f:
         while True:
             a = f.read(1024)
+            print(a)
             if not a:
                 break
             ss.send(a)
-        time.sleep(0.1)  # 延时确保文件发送完整
+        time.sleep(1)  # 延时确保文件发送完整
         ss.send('EOF'.encode())
         print('Upload completed')
+    while True:
+        data = ss.recv(1024)
+        if data == 'Completed'.encode():
+            break
     ss.send('quit'.encode())
     time.sleep(0.1)
     # 上传成功后发一个信息给所有客户端
     mes = '``#' + name + ':;' + user + ':;' + chat
+
     s.send(mes.encode())
 
 
@@ -730,7 +737,9 @@ def recv():
                     listbox.insert(tkinter.END, data4, 'red')  # END将信息加在最后一行
                 if pic[0] == '``':
                     # 从服务端下载发送的图片
-                    fileGet(pic[1])
+                    imageName = fileGet(pic[1])
+                    memPic = ImageTk.PhotoImage(Image.open(imageName).resize((200,200)))
+                    listbox.image_create(tkinter.END, image=memPic)
                 else:
                     # 将表情图贴到聊天框
                     listbox.image_create(tkinter.END, image=dic[markk])
