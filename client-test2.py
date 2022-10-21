@@ -1,7 +1,7 @@
 import socket
 import threading
 import json  # json.dumps(some)打包   json.loads(some)解包
-import tkinter
+import tkinter as tk
 import tkinter.messagebox
 from tkinter.scrolledtext import ScrolledText  # 导入多行文本框用到的包
 import time
@@ -89,13 +89,16 @@ root.resizable(0, 0)  # 限制窗口大小
 
 # 创建多行文本框
 listbox = ScrolledText(root)
+listbox.config(state=tk.DISABLED)
 listbox.place(x=5, y=0, width=570, height=320)
 # 文本框使用的字体颜色
 listbox.tag_config('red', foreground='red')
 listbox.tag_config('blue', foreground='blue')
 listbox.tag_config('green', foreground='green')
 listbox.tag_config('pink', foreground='pink')
-listbox.insert(tkinter.END, 'Welcome to the chat room!', 'blue')
+listbox.config(state=tk.NORMAL)
+listbox.insert(tkinter.INSERT, 'Welcome to the chat room!', 'blue')
+listbox.config(state=tk.DISABLED)
 
 # 表情功能代码部分
 # 四个按钮, 使用全局变量, 方便创建和销毁
@@ -559,12 +562,14 @@ AudioOpen = True  # 是否打开音频聊天
 
 def video_invite():
     global IsOpen, Version, AudioOpen
-    if Version == 4:
+    host_name = socket.gethostbyname(socket.getfqdn(socket.gethostname()))
+    print(host_name)
+    if Version == 4 or "4":
         host_name = socket.gethostbyname(socket.getfqdn(socket.gethostname()))
     else:
         host_name = [i['addr'] for i in ifaddresses(interfaces()[-2]).setdefault(AF_INET6, [{'addr': 'No IP addr'}])][
             -1]
-
+    print(host_name)
     invite = 'INVITE' + host_name + ':;' + user + ':;' + chat
     s.send(invite.encode())
     if not IsOpen:
@@ -799,12 +804,18 @@ def recv():
                 data4 = '\n' + data2 + '：'  # 例:名字-> \n名字：
                 if data3 == '------Group chat-------':
                     if data2 == user:  # 如果是自己则将则字体变为蓝色
+                        listbox.config(state=tk.NORMAL)
                         listbox.insert(tkinter.END, data4, 'blue')
+                        listbox.config(state=tk.DISABLED)
                     else:
+                        listbox.config(state=tk.NORMAL)
                         listbox.insert(tkinter.END, data4,
                                        'green')  # END将信息加在最后一行
+                        listbox.config(state=tk.DISABLED)
                 elif data2 == user or data3 == user:  # 显示私聊
+                    listbox.config(state=tk.NORMAL)
                     listbox.insert(tkinter.END, data4, 'red')  # END将信息加在最后一行
+                    listbox.config(state=tk.DISABLED)
                 if pic[0] == '``':
                     # 从服务端下载发送的图片
                     imageName = fileGet(pic[1])
@@ -817,24 +828,36 @@ def recv():
                 data1 = '\n' + data1
                 if data3 == '------Group chat-------':
                     if data2 == user:  # 如果是自己则将则字体变为蓝色
+                        listbox.config(state=tk.NORMAL)
                         listbox.insert(tkinter.END, data1, 'blue')
+                        listbox.config(state=tk.DISABLED)
                     else:
+                        listbox.config(state=tk.NORMAL)
                         listbox.insert(tkinter.END, data1,
                                        'green')  # END将信息加在最后一行
+                        listbox.config(state=tk.DISABLED)
                     if len(data) == 4:
+                        listbox.config(state=tk.NORMAL)
                         listbox.insert(tkinter.END, '\n' + data[3], 'pink')
+                        listbox.config(state=tk.DISABLED)
                 elif data3 == 'Robot' and data2 == user:
                     print('Here:Robot')
                     apikey = 'ee19328107fa41e987a42a064a68d0da'
                     url = 'http://openapi.tuling123.com/openapi/api/v2'
                     print('msg = ', data1)
+                    listbox.config(state=tk.NORMAL)
                     listbox.insert(tkinter.END, data1, 'blue')
+                    listbox.config(state=tk.DISABLED)
                     reply = call_robot(url, apikey, data1.split('：')[1])
                     reply_txt = '\nRobot:' + \
                         reply['results'][0]['values']['text']
+                    listbox.config(state=tk.NORMAL)
                     listbox.insert(tkinter.END, reply_txt, 'pink')
+                    listbox.config(state=tk.DISABLED)
                 elif data2 == user or data3 == user:  # 显示私聊
+                    listbox.config(state=tk.NORMAL)
                     listbox.insert(tkinter.END, data1, 'red')  # END将信息加在最后一行
+                    listbox.config(state=tk.DISABLED)
             listbox.see(tkinter.END)  # 显示在最后
 
 

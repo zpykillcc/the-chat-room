@@ -22,7 +22,7 @@ class Video_Server(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.ADDR = ('', port)
-        if version == 4:
+        if version == 4 or "4":
             self.sock = socket(AF_INET, SOCK_STREAM)
         else:
             self.sock = socket(AF_INET6, SOCK_STREAM)
@@ -65,7 +65,8 @@ class Video_Server(threading.Thread):
 class Video_Client(threading.Thread):
     def __init__(self, ip, port, showme, level, version):
         threading.Thread.__init__(self)
-        self.setDaemon(True)
+        #self.setDaemon(True)
+        self.daemon = True
         self.ADDR = (ip, port)
         self.showme = showme
         if int(level) < 3:
@@ -75,7 +76,7 @@ class Video_Client(threading.Thread):
         self.fx = 1 / (self.interval + 1)
         if self.fx < 0.3:
             self.fx = 0.3
-        if version == 4:
+        if version == 4 or "4":
             self.sock = socket(AF_INET, SOCK_STREAM)
         else:
             self.sock = socket(AF_INET6, SOCK_STREAM)
@@ -125,7 +126,7 @@ class Audio_Server(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.ADDR = ('', port)
-        if version == 4:
+        if version == 4 or "4":
             self.sock = socket(AF_INET, SOCK_STREAM)
         else:
             self.sock = socket(AF_INET6, SOCK_STREAM)
@@ -176,7 +177,7 @@ class Audio_Client(threading.Thread):
         threading.Thread.__init__(self)
         self.setDaemon(True)
         self.ADDR = (ip, port)
-        if version == 4:
+        if version == 4 or "4":
             self.sock = socket(AF_INET, SOCK_STREAM)
         else:
             self.sock = socket(AF_INET6, SOCK_STREAM)
@@ -194,6 +195,7 @@ class Audio_Client(threading.Thread):
     def run(self):
         while True:
             try:
+                print(self.ADDR)
                 self.sock.connect(self.ADDR)
                 break
             except:
